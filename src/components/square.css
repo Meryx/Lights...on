@@ -1,0 +1,19 @@
+.square-tile{
+  width: 44px;
+  height: 44px;
+  border: 1px solid #43455c;
+  margin: -1px;
+  padding: -1px;
+  vertical-align: top;
+  color: #3bba9c;
+}
+
+
+
+
+
+
+
+.square-tile:focus {
+  outline: none;
+}
