@@ -2,8 +2,9 @@
 
 .app{
   text-align: center;
-  width: 250px;
   margin: auto;
+  font-size: 1.5rem;
+
 }
 
 .rules {
@@ -20,7 +21,7 @@
 
 
 .controls button {
-  margin-right: 5px;
+  margin-right: 10px;
   font-family:"MS Sans Serif";
   font-size:11px;
   outline:1px solid #000000;
@@ -28,10 +29,12 @@
   border-width:1px;
   border-style:solid;
   border-color:#FFFFFF #808080 #808080 #FFFFFF;
+  width: 70px;
+  height: 30px;
 }
 
 .controls select {
-  margin-right: 5px;
+  margin-right: 10px;
   font-family:"MS Sans Serif";
   font-size:11px;
   outline:1px solid #000000;
@@ -39,7 +42,8 @@
   border-width:1px;
   border-style:solid;
   border-color:#FFFFFF #808080 #808080 #FFFFFF;
-  width: 40px;
+  width: 70px;
+  height: 30px;
 }
 
 
