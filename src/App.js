@@ -4,39 +4,42 @@ import './app.css';
 
 function App() {
   const DEFAULT_SIZE = 3;
-  const [size, setSize] = useState(DEFAULT_SIZE);
-  const [tiles, setTiles] = useState({
+  const [state, setState] = useState({
     background: Array(DEFAULT_SIZE * DEFAULT_SIZE).fill(false),
     value: Array(DEFAULT_SIZE * DEFAULT_SIZE).fill(""),
-  });
-  const [congratulations, setCongratulations] = useState(false);
+    congratulations: false,
+    counter: 0,
+    size: DEFAULT_SIZE
+  })
+
   let solution = [];
 
 
 
-  const handleSetCongratulations = (message) => {
-    setCongratulations(message);
-  }
+
 
 
   const handleSetValue = (values) => {
-    setTiles({
-      ...tiles,
+    setState({
+      ...state,
+      background: Array(state.size * state.size).fill(false),
+      counter: 0,
       value: values.map((item) => item ? "*" : ""),
-    })
+      congratulations: false,
+    });
   };
 
-  const handleSetTilesFull = (tilesObject) => {
-    setTiles(tilesObject)
-  };
 
   const handleSetSize = (newSize) => {
-    const tempTiles = {
+    setState({
       background: Array(newSize * newSize).fill(false),
       value: Array(newSize * newSize).fill(""),
-    };
-    handleSetTilesFull(tempTiles);
-    setSize(newSize);
+      congratulations: false,
+      counter: 0,
+      size: newSize,
+    });
+
+
   };
 
 
@@ -47,7 +50,7 @@ function App() {
 
   const getNeighbours = (index) => {
     const neighbours = [];
-    const tempSize = size;
+    const tempSize = state.size;
 
     if(index % tempSize !== 0){
       neighbours.push(index - 1);
@@ -84,18 +87,22 @@ function App() {
   }
 
   const reset = () => {
-    setTiles({
-      background: Array(size * size).fill(false),
-      value: Array(size * size).fill(""),
-    })
-    setCongratulations(false);
+    setState({
+      ...state,
+      background: Array(state.size * state.size).fill(false),
+      value: Array(state.size * state.size).fill(""),
+      counter: 0,
+      congratulations: false
+    });
+
+
   }
 
 
 
   const visualize = async (parameterTiles) => {
     const tempTiles = parameterTiles.slice();
-    let tempValues = tiles.value.slice();
+    let tempValues = state.value.slice();
     for(let i = 0; i < parameterTiles.length; i++){
       await new Promise(r => setTimeout(r, 500));
       tempValues = tempValues.map((item, j) => j !== i ? item : tempTiles[i]);
@@ -137,23 +144,15 @@ function App() {
 
   const startSolving = () => {
     reset();
-    const tempTiles = Array(size * size).fill(false);
+    const tempTiles = Array(state.size * state.size).fill(false);
 
     solve(tempTiles, 0);
     visualize(solution);
   }
 
-  const checkWin = (parameterTiles) =>{
-    const cond = parameterTiles.find((item) => !item);
-    if(cond === undefined){
-        handleSetCongratulations(true);
-    }
-  }
-
   const handleClick = (index) => {
-
-    const tempTiles = tiles.background.slice();
-    const tempValues = tiles.value.slice();
+    const tempTiles = state.background.slice();
+    const tempValues = state.value.slice();
     tempTiles[index] = !tempTiles[index];
     tempValues[index] = "";
 
@@ -163,11 +162,23 @@ function App() {
       tempTiles[i] = !tempTiles[i];
     }
 
-    checkWin(tempTiles);
+    const cond = tempTiles.find((item) => !item);
+    if(cond === undefined){
+      setState({
+        ...state,
+        background: tempTiles,
+        value: tempValues,
+        counter: state.counter + 1,
+        congratulations: true,
+      });
+      return;
+    }
 
-    handleSetTilesFull({
+    setState({
+      ...state,
       background: tempTiles,
       value: tempValues,
+      counter: state.counter + 1
     });
 
   }
@@ -179,7 +190,7 @@ function App() {
       </div>
       <div className="game">
         <div className="controls">
-          <select className="config-selection" value={size} onChange={(e) => {
+          <select className="config-selection" onChange={(e) => {
                 handleSetSize(parseInt(e.target.value));
               }}>
                 {Array(3).fill(null).map((_, i) => {
@@ -191,14 +202,17 @@ function App() {
                 })}
             </select>
             <button onClick={reset}>Clear</button>
-            {size < 5
+            {state.size < 5
             ? <button onClick={startSolving}>Solve</button>
             :''}
           </div>
           <div className="congratulations">
-            <p style={{color: congratulations ? "#3bba9c" : "#43455c"}}>Congratulations, you did it!</p>
+            <p style={{color: state.congratulations ? "#3bba9c" : "#43455c"}}>Congratulations, you did it!</p>
           </div>
-        <Board tiles={tiles} size={size} handleClick={handleClick}/>
+        <Board tiles={state} size={state.size} handleClick={handleClick}/>
+      </div>
+      <div className="counter">
+        <p>Moves: {state.counter}</p>
       </div>
       <div className="rules">
         <p>To win, all squares must be lit (green).

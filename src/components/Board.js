@@ -8,7 +8,8 @@ const Board = ({ size, tiles, handleClick }) => {
     <div className="board">
       {Array(size).fill(null).map((_, i) =>
         <Row
-        tiles={tiles}
+        background={tiles.background}
+        value={tiles.value}
         size={size}
         key={i}
         index={i}
